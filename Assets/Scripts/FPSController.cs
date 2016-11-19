@@ -17,14 +17,19 @@ public class FPSController : NetworkBehaviour
     // Use this for initialization
     void Start()
     {
-        if (!isLocalPlayer) return;
-
-        //transform.Translate(0, 1, 0);
-        
         mainCam   = GameObject.Find("Main Camera").GetComponent<Camera>();
         playerCam = GetComponentInChildren<Camera>();
+        if (isLocalPlayer)
+        {
+            foreach (Renderer r in GetComponentsInChildren<Renderer>())
+                r.enabled = false;
 
-        mainCam.enabled = false;
+            mainCam.enabled = false;
+        }
+        else
+        {
+            playerCam.enabled = false;
+        }
     }
 
     void OnDestroy()
@@ -35,6 +40,7 @@ public class FPSController : NetworkBehaviour
     // Used for jump pseudophysics
     void FixedUpdate()
     {
+        if (!isLocalPlayer) return;
         if (transform.position.y == 1.0f && jumpSpeed.y < 3.0f) return;
 
         jumpSpeed.y -= gravity * Time.fixedDeltaTime;
