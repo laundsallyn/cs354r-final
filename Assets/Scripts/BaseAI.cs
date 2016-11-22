@@ -29,6 +29,7 @@ public class BaseAI : MonoBehaviour {
         }
         if(targetDistance<attackDistance)
         {
+            myRenderer.material.color = Color.red;
             attackTarget();
         }
 	}
