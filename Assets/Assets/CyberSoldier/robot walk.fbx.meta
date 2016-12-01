@@ -1,0 +1,315 @@
+fileFormatVersion: 2
+guid: 1d307d99296c1bc449933588c43dd552
+timeCreated: 1479501998
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: Armature
+    100002: Camera
+    100004: Chest
+    100006: CyberSoldier
+    100008: FirstDistal.L
+    100010: FirstDistal.L_end
+    100012: FirstDistal.R
+    100014: FirstDistal.R_end
+    100016: FirstMiddle.L
+    100018: FirstMiddle.R
+    100020: FirstProximal.L
+    100022: FirstProximal.R
+    100024: Foot.L
+    100026: Foot.R
+    100028: Hand.L
+    100030: Hand.R
+    100032: Head
+    100034: Head_end
+    100036: Hips
+    100038: Lamp
+    100040: LowerArm.L
+    100042: LowerArm.R
+    100044: LowerLeg.L
+    100046: LowerLeg.R
+    100048: Neck
+    100050: //RootNode
+    100052: SecondDistal.L
+    100054: SecondDistal.L_end
+    100056: SecondDistal.R
+    100058: SecondDistal.R_end
+    100060: SecondMiddle.L
+    100062: SecondMiddle.R
+    100064: SecondProximal.L
+    100066: SecondProximal.R
+    100068: Shoulder.L
+    100070: Shoulder.R
+    100072: Spine
+    100074: ThumbDistal.L
+    100076: ThumbDistal.L_end
+    100078: ThumbDistal.R
+    100080: ThumbDistal.R_end
+    100082: ThumbMiddle.L
+    100084: ThumbMiddle.R
+    100086: ThumbProximal.L
+    100088: ThumbProximal.R
+    100090: Toe.L
+    100092: Toe.L_end
+    100094: Toe.R
+    100096: Toe.R_end
+    100098: UpperArm.l
+    100100: UpperArm.r
+    100102: UpperLeg.L
+    100104: UpperLeg.R
+    400000: Armature
+    400002: Camera
+    400004: Chest
+    400006: CyberSoldier
+    400008: FirstDistal.L
+    400010: FirstDistal.L_end
+    400012: FirstDistal.R
+    400014: FirstDistal.R_end
+    400016: FirstMiddle.L
+    400018: FirstMiddle.R
+    400020: FirstProximal.L
+    400022: FirstProximal.R
+    400024: Foot.L
+    400026: Foot.R
+    400028: Hand.L
+    400030: Hand.R
+    400032: Head
+    400034: Head_end
+    400036: Hips
+    400038: Lamp
+    400040: LowerArm.L
+    400042: LowerArm.R
+    400044: LowerLeg.L
+    400046: LowerLeg.R
+    400048: Neck
+    400050: //RootNode
+    400052: SecondDistal.L
+    400054: SecondDistal.L_end
+    400056: SecondDistal.R
+    400058: SecondDistal.R_end
+    400060: SecondMiddle.L
+    400062: SecondMiddle.R
+    400064: SecondProximal.L
+    400066: SecondProximal.R
+    400068: Shoulder.L
+    400070: Shoulder.R
+    400072: Spine
+    400074: ThumbDistal.L
+    400076: ThumbDistal.L_end
+    400078: ThumbDistal.R
+    400080: ThumbDistal.R_end
+    400082: ThumbMiddle.L
+    400084: ThumbMiddle.R
+    400086: ThumbProximal.L
+    400088: ThumbProximal.R
+    400090: Toe.L
+    400092: Toe.L_end
+    400094: Toe.R
+    400096: Toe.R_end
+    400098: UpperArm.l
+    400100: UpperArm.r
+    400102: UpperLeg.L
+    400104: UpperLeg.R
+    4300000: CyberSoldier
+    7400000: Armature|ArmatureAction
+    9500000: //RootNode
+    13700000: CyberSoldier
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Armature|ArmatureAction
+      takeName: Armature|ArmatureAction
+      firstFrame: 0
+      lastFrame: 31
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Armature
+        weight: 1
+      - path: Armature/Hips
+        weight: 1
+      - path: Armature/Hips/Spine
+        weight: 1
+      - path: Armature/Hips/Spine/Chest
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Neck
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Neck/Head
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Neck/Head/Head_end
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/FirstProximal.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/FirstProximal.L/FirstMiddle.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/FirstProximal.L/FirstMiddle.L/FirstDistal.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/FirstProximal.L/FirstMiddle.L/FirstDistal.L/FirstDistal.L_end
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/SecondProximal.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/SecondProximal.L/SecondMiddle.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/SecondProximal.L/SecondMiddle.L/SecondDistal.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/SecondProximal.L/SecondMiddle.L/SecondDistal.L/SecondDistal.L_end
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/ThumbProximal.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/ThumbProximal.L/ThumbMiddle.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/ThumbProximal.L/ThumbMiddle.L/ThumbDistal.L
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.L/UpperArm.l/LowerArm.L/Hand.L/ThumbProximal.L/ThumbMiddle.L/ThumbDistal.L/ThumbDistal.L_end
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/FirstProximal.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/FirstProximal.R/FirstMiddle.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/FirstProximal.R/FirstMiddle.R/FirstDistal.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/FirstProximal.R/FirstMiddle.R/FirstDistal.R/FirstDistal.R_end
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/SecondProximal.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/SecondProximal.R/SecondMiddle.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/SecondProximal.R/SecondMiddle.R/SecondDistal.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/SecondProximal.R/SecondMiddle.R/SecondDistal.R/SecondDistal.R_end
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/ThumbProximal.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/ThumbProximal.R/ThumbMiddle.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/ThumbProximal.R/ThumbMiddle.R/ThumbDistal.R
+        weight: 1
+      - path: Armature/Hips/Spine/Chest/Shoulder.R/UpperArm.r/LowerArm.R/Hand.R/ThumbProximal.R/ThumbMiddle.R/ThumbDistal.R/ThumbDistal.R_end
+        weight: 1
+      - path: Armature/Hips/UpperLeg.L
+        weight: 1
+      - path: Armature/Hips/UpperLeg.L/LowerLeg.L
+        weight: 1
+      - path: Armature/Hips/UpperLeg.L/LowerLeg.L/Foot.L
+        weight: 1
+      - path: Armature/Hips/UpperLeg.L/LowerLeg.L/Foot.L/Toe.L
+        weight: 1
+      - path: Armature/Hips/UpperLeg.L/LowerLeg.L/Foot.L/Toe.L/Toe.L_end
+        weight: 1
+      - path: Armature/Hips/UpperLeg.R
+        weight: 1
+      - path: Armature/Hips/UpperLeg.R/LowerLeg.R
+        weight: 1
+      - path: Armature/Hips/UpperLeg.R/LowerLeg.R/Foot.R
+        weight: 1
+      - path: Armature/Hips/UpperLeg.R/LowerLeg.R/Foot.R/Toe.R
+        weight: 1
+      - path: Armature/Hips/UpperLeg.R/LowerLeg.R/Foot.R/Toe.R/Toe.R_end
+        weight: 1
+      - path: Camera
+        weight: 1
+      - path: CyberSoldier
+        weight: 1
+      - path: Lamp
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
