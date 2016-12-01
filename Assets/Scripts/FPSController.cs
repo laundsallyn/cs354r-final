@@ -14,15 +14,15 @@ public class FPSController : NetworkBehaviour
     float rotationY = 0F;
     private Camera mainCam;
     private Camera playerCam;
+    private Transform transf;
     private Rigidbody body;
-    private ConstantForce constForce;
     // Use this for initialization
     void Start()
     {
         mainCam    = GameObject.Find("Main Camera").GetComponent<Camera>();
         playerCam  = GetComponentInChildren<Camera>();
+        transf     = GetComponentsInChildren<Transform>()[1];
         body       = GetComponentInChildren<Rigidbody>();
-        constForce = GetComponentInChildren<ConstantForce>();
         if (isLocalPlayer)
         {
             foreach (Renderer r in GetComponentsInChildren<Renderer>())
@@ -69,14 +69,14 @@ public class FPSController : NetworkBehaviour
             force.x += 1;
         if (Input.GetKeyUp("d"))
             force.x -= 1;
-        if (Input.GetKeyDown("space") && Physics.Raycast(transform.position, transform.up * -1, 1.1f, 1 << LayerMask.NameToLayer("Ground")))
+        if (Input.GetKeyDown("space") && Physics.Raycast(transf.position, transf.up * -1, 1.1f, 1 << LayerMask.NameToLayer("Ground")))
             body.AddForce(new Vector3(0, 300, 0));
-        curForce = transform.rotation * force.normalized * movForce;
-        float rX = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivityX;
+        curForce = transf.rotation * force.normalized * movForce;
+        float rX = transf.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivityX;
         rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
         rotationY = Mathf.Clamp(rotationY, minimumY, maximumY);
 
         playerCam.transform.localEulerAngles = new Vector3(-rotationY, 0, 0);
-        transform.localEulerAngles = new Vector3(0, rX, 0);
+        transf.localEulerAngles = new Vector3(0, rX, 0);
     }
 }
