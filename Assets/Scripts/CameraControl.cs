@@ -9,7 +9,7 @@ public class CameraControl : MonoBehaviour {
     private const int boundary = 40;
     private Vector3 scrollSpeed = Vector3.zero;
     private int width, height;
-    public Text debugInfo;
+    //public Text debugInfo;
     void Start()
     {
         width = Screen.width;
@@ -18,8 +18,8 @@ public class CameraControl : MonoBehaviour {
 
     void Update()
     {
-        debugInfo.text = "width: " + width + "\nheight: " + height+"\n" 
-            + Input.mousePosition;
+        //debugInfo.text = "width: " + width + "\nheight: " + height+"\n" 
+        //    + Input.mousePosition;
 
         if (Input.mousePosition.x > width - boundary)
             scrollSpeed = new Vector3(30, 0, 0);

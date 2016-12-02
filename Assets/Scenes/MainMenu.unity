@@ -100,7 +100,6 @@ GameObject:
   - 224: {fileID: 201422096}
   - 222: {fileID: 201422098}
   - 114: {fileID: 201422097}
-  - 114: {fileID: 201422100}
   - 114: {fileID: 201422099}
   m_Layer: 5
   m_Name: quit
@@ -205,7 +204,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 201422100}
+      - m_Target: {fileID: 0}
         m_MethodName: quitGame
         m_Mode: 1
         m_Arguments:
@@ -218,17 +217,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &201422100
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 201422095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02534473fd22d644d9e2fbf4d640db4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &805823887
 GameObject:
   m_ObjectHideFlags: 0
@@ -343,7 +331,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1233161650}
+      - m_Target: {fileID: 0}
         m_MethodName: nextScene
         m_Mode: 5
         m_Arguments:
@@ -429,7 +417,6 @@ GameObject:
   - 223: {fileID: 1233161648}
   - 114: {fileID: 1233161647}
   - 114: {fileID: 1233161646}
-  - 114: {fileID: 1233161650}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -516,17 +503,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1233161650
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1233161645}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 818bd0a427eda38408c205745cae4d65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1371494456
 GameObject:
   m_ObjectHideFlags: 0
