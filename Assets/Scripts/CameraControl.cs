@@ -11,17 +11,33 @@ public class CameraControl : MonoBehaviour
     private int zoom = 400;
     private Vector3 scrollSpeed, zoomVector = Vector3.zero;
     private int width, height;
-
+    private GameObject cameraTarget;
+    private Camera RTSCam, minimapCam;
     void Start()
     {
+        cameraTarget = GameObject.Find("CameraTarget");
+        RTSCam = cameraTarget.GetComponentInChildren<Camera>();
+        minimapCam = GameObject.Find("MiniMap Camera").GetComponent<Camera>();
         width = Screen.width;
-        height = Screen.height;
+        height = Screen.height; 
     }
 
     void Update()
     {
 
-
+        if (Input.GetMouseButtonDown(0) && minimapCam.pixelRect.Contains(Input.mousePosition))
+        {
+            //float xRatio = Input.mousePosition.x / minimapCam.pixelWidth;
+            //float zRatio = Input.mousePosition.z / minimapCam.pixelHeight;
+            Ray ray = minimapCam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+                cameraTarget.transform.position =new Vector3(hit.point.x, cameraTarget.transform.position.y, hit.point.z);
+        }
+        if (Input.GetKeyDown("d"))
+        {
+            Debug.Log("Camera pos is " + cameraTarget.transform.position);
+        }
         if (Input.mousePosition.x > width - boundary)
             scrollSpeed = new Vector3(30, 0, 0);
         else if (Input.mousePosition.x < 0 + boundary)
@@ -50,5 +66,11 @@ public class CameraControl : MonoBehaviour
         transform.Translate(zoomVector * Time.deltaTime);
         transform.Translate(scrollSpeed * Time.deltaTime);
     }
-
+    void OnDrawGizmos()
+    {
+        float verticalHeightSeen = 50f ;
+        //Debug.Log("Viewport size is: " + verticalHeightSeen);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireCube(transform.position, new Vector3(verticalHeightSeen, 0, verticalHeightSeen));
+    }
 }
