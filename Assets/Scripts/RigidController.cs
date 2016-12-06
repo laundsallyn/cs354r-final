@@ -43,7 +43,7 @@ public class RigidController : NetworkBehaviour
         //pauseMenu.enabled = false;
         transf = transform.Find("MC");
         canvas =  transform.Find("HUD").gameObject.GetComponent<Canvas>();
-        gunflame = transform.Find("MC/Camera/fireball").gameObject;
+        gunflame = transform.Find("MC/Camera/fire").gameObject;
         fpsArm = transform.Find("MC/Camera/Arm").gameObject;
         flame = gunflame.GetComponent<ParticleSystem>();
         canvas.GetComponentsInChildren<Text>(txts);
@@ -167,6 +167,8 @@ public class RigidController : NetworkBehaviour
             ani.Stop("Sidewalk");
             force.x -= 1;
         }
+        if(ammoCnt == 0)
+            reload();
 
         if (Input.GetKeyDown("r"))
         {
@@ -188,7 +190,8 @@ public class RigidController : NetworkBehaviour
         float rX = transf.localEulerAngles.y + Input.GetAxis("Mouse X") * sensitivityX;
         rotationY += Input.GetAxis("Mouse Y") * sensitivityY;
         rotationY = Mathf.Clamp(rotationY, minimumY, maximumY);
-
+        hpT.text = "" + hp;
+        ammoT.text = "" + ammoCnt;
         playerCam.transform.localEulerAngles = new Vector3(-rotationY, 0, 0);
         transf.localEulerAngles = new Vector3(0, rX, 0);
     }
