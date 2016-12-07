@@ -30,7 +30,6 @@ public class RTSSelectionCam : MonoBehaviour {
                 {
                     if (IsWithinSelectionBounds(go) && !selectedObjects.Contains(go))
                     {
-                        print("adding object to selected");
                         selectedObjects.Add(go);
                     }
                 }
@@ -47,7 +46,7 @@ public class RTSSelectionCam : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(1))
         {
-            //print("right mouse click");
+            Debug.Log("RMB");
             RTSClick();
         }
     }
