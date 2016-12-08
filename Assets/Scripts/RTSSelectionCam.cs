@@ -19,19 +19,15 @@ public class RTSSelectionCam : MonoBehaviour {
         // If we press the left mouse button, save mouse location and begin selection
         if (Input.GetMouseButtonDown(0))
         {
-            if (firstSelect)
-            {
+            if (!isSelecting)
                 selectedObjects.Clear();
-                firstSelect = false;
-            }
-            else
+            foreach (GameObject go in allUnits)
             {
-                foreach (GameObject go in allUnits)
+                Debug.Log("checking this object");
+                if (IsWithinSelectionBounds(go))
                 {
-                    if (IsWithinSelectionBounds(go) && !selectedObjects.Contains(go))
-                    {
-                        selectedObjects.Add(go);
-                    }
+                    Debug.Log("adding this object");
+                    selectedObjects.Add(go);
                 }
             }
             isSelecting = true;
@@ -41,7 +37,6 @@ public class RTSSelectionCam : MonoBehaviour {
         if (Input.GetMouseButtonUp(0))
         {
             isSelecting = false;
-            firstSelect = true;
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -67,17 +62,16 @@ public class RTSSelectionCam : MonoBehaviour {
         }
     }
 
-    public bool IsWithinSelectionBounds(GameObject gameObject)
+    bool IsWithinSelectionBounds(GameObject gameObject)
     {
+        Debug.Log("checking");
         if (!isSelecting)
             return false;
 
-        var camera = Camera.main;
-        var viewportBounds =
-            Utils.GetViewportBounds(camera, mousePosition1, Input.mousePosition);
+        Camera cam = Camera.main;
+        Bounds viewportBounds = Utils.GetViewportBounds(cam, mousePosition1, Input.mousePosition);
 
-        return viewportBounds.Contains(
-            camera.WorldToViewportPoint(gameObject.transform.position));
+        return viewportBounds.Contains(cam.WorldToViewportPoint(gameObject.transform.position));
     }
 
     void OnGUI()
