@@ -224,34 +224,36 @@ public class RigidController : NetworkBehaviour
             Debug.DrawLine(playerCam.transform.position, hit.point, Color.cyan);
             Debug.Log("firing shot");
             //hit.collider.SendMessageUpwards("applyDamage", dmgInfo, SendMessageOptions.DontRequireReceiver);
-            CmdSendShot(hit, dmgInfo);
-
+            BasicSoldier bs = hit.collider.gameObject.GetComponent<BasicSoldier>();
+            Debug.Log("HITTING " + hit.collider.gameObject.name);
+            if (bs)
+            {
+                Debug.Log("Client found bs");
+                CmdSendShot(bs.GetComponent<NetworkIdentity>().netId, dmgInfo);
+            }
         }
     }
-
+    
     [Command]
-    public void CmdSendShot(RaycastHit hit, Vector4 dmgInfo)
+    public void CmdSendShot(NetworkInstanceId nid, Vector4 dmgInfo)
     {
         //Debug.Log(hit.collider.gameObject.name);
-        BasicSoldier bs = hit.collider.gameObject.GetComponent<BasicSoldier>();
-        if (bs)
-        {
-            bs.ApplyDamage(dmgInfo);
-        }
+        Debug.Log("Applying damage on server");
+        NetworkServer.FindLocalObject(nid).GetComponent<BasicSoldier>().ApplyDamage(dmgInfo);
     }
 
     [ClientRpc]
     public void RpcApplyDamage(Vector4 dmg)
     {
-        Debug.Log("yoinks");
+        //Debug.Log("yoinks");
         if (hp <= 0)
             return;
         hp -= (int)dmg.w;
-        Debug.Log("current hp is " + hp);
+        //Debug.Log("current hp is " + hp);
         Vector3 dir = new Vector3(-dmg.x, -dmg.y, -dmg.z);
         if (hp < 0)
         {
-            Debug.Log("Fuck im dead");
+            //Debug.Log("Fuck im dead");
             dead(dir);
         }
     }

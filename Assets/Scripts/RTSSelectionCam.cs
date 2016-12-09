@@ -35,7 +35,7 @@ public class RTSSelectionCam : NetworkBehaviour {
         if (Input.GetMouseButtonUp(0))
         {
             allUnits = GameObject.FindGameObjectsWithTag("EnemyUnit");
-            Debug.Log(allUnits.Length);
+            //Debug.Log(allUnits.Length);
             isSelecting = false;
             Vector3 mousePositionT = Input.mousePosition;
             mousePosition1.y = Screen.height - mousePosition1.y;
@@ -52,7 +52,7 @@ public class RTSSelectionCam : NetworkBehaviour {
                     selectedObjects.Add(go);
                 }
             }
-            Debug.Log(selectedObjects.Count);
+            //Debug.Log(selectedObjects.Count);
         }
 
         if (Input.GetMouseButtonDown(1))

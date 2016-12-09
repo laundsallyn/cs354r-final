@@ -15,8 +15,8 @@ public class BasicSoldier : NetworkBehaviour {
     private Rigidbody body;
     private NavMeshAgent agent;
     private Animation ani;
-    AudioSource shotAudio;
-
+    
+    private AudioSource shotAudio;
     private float deathCounter;
     private bool death;
     private float shootCounter;
@@ -43,6 +43,7 @@ public class BasicSoldier : NetworkBehaviour {
         maxhp = hp = 300;
         maxammo = ammo = 30;
         damage = 17;
+        shotAudio = GetComponent<AudioSource>();    
         GameObject quad = transform.Find("Quad").gameObject;
         //if (!isServer)
         //    quad.GetComponent<Renderer>().enabled = false;
@@ -290,13 +291,13 @@ public class BasicSoldier : NetworkBehaviour {
         ammo -= 1;
         flame.Emit(1);
         //Debug.Log(gunflame.name);
-        //shotAudio.Play();
-        Debug.Log("bang");
+        shotAudio.Play();
+        //Debug.Log("bang");
         Vector3 direction = transform.TransformDirection(Vector3.forward);
         RaycastHit hit;
         if (Physics.Raycast(transform.position + transform.up, direction, out hit, 300))
         {
-            Debug.Log("bang2");
+            //Debug.Log("bang2");
             Vector4 dmgInfo = new Vector4();
             dmgInfo.x = hit.normal.x;
             dmgInfo.y = hit.normal.y;
@@ -317,7 +318,7 @@ public class BasicSoldier : NetworkBehaviour {
         RigidController rc = hit.collider.gameObject.GetComponentInParent<RigidController>();
         if (rc)
         {
-            Debug.Log("Sending shot to player!");
+            //Debug.Log("Sending shot to player!");
             rc.RpcApplyDamage(dmgInfo);
         }
     }
