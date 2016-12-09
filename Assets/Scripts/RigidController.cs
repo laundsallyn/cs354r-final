@@ -54,12 +54,14 @@ public class RigidController : NetworkBehaviour
     private Animation animation;
     void Start()
     {
-
+        GameObject.Find("networkManager").GetComponent<NetworkManagerHUD>().showGUI = false;
+        Cursor.lockState = CursorLockMode.Confined;
         if (isServer && isLocalPlayer)
         {
             Destroy(gameObject);
             return;
         }
+        Cursor.visible = false;
         List<Text> txts = new List<Text>();
         //pauseMenu = canvas.GetComponentInChildren<Image>();
         //pauseMenu.enabled = false;

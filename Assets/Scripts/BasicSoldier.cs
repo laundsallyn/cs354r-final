@@ -21,6 +21,12 @@ public class BasicSoldier : NetworkBehaviour {
     private bool death;
     private float shootCounter;
 
+    [SyncVar]
+    private Vector3    realPos;
+    [SyncVar]
+    private Quaternion realRot;
+    private float lastTime;
+
     public enum AIStates
     {
         dead = 0,
@@ -33,6 +39,9 @@ public class BasicSoldier : NetworkBehaviour {
 
     // Use this for initialization
     void Start () {
+        if (!isServer)
+            GetComponent<NavMeshAgent>().enabled = false;
+        lastTime = 0.0f;
         target = GameObject.FindGameObjectWithTag("Player");
         playerFound = false;
         state = AIStates.passive;
@@ -62,19 +71,32 @@ public class BasicSoldier : NetworkBehaviour {
         if (!isServer) return;
 
         if(death)
-        {
-            deathCounter += Time.fixedDeltaTime;
-        }
-        if(death && deathCounter > 1.5f)
-        {
             Network.Destroy(GetComponent<NetworkView>().viewID);
-        }
     }
 
 	
+    [ClientRpc]
+    void RpcSync(Vector3 position, Quaternion rotation)
+    {
+        realPos = position;
+        realRot = rotation;
+        lastTime = Time.time;
+    }
+
 	// Update is called once per frame
 	void Update () {
-        if (!isServer) return;
+        if (!isServer)
+        {
+            Vector3 tPos = transform.position; tPos.y = 0;
+            Vector3 rPos = realPos; rPos.y = 0;
+            transform.position = Vector3.Lerp(tPos, realPos, 10*(Time.time - lastTime));
+            transform.rotation = Quaternion.Lerp(transform.rotation, realRot, 10*(Time.time - lastTime));
+            return;
+        }
+
+        realPos = transform.position;
+        realRot = transform.rotation;
+        RpcSync(realPos, realRot);
 
         if(target == null)
         {
