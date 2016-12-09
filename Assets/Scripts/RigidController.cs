@@ -28,6 +28,7 @@ public class RigidController : NetworkBehaviour
 
     float rotationY = 0F;
     private Camera mainCam;
+    private Camera miniCam;
     private Camera playerCam;
     private Transform transf;
 
@@ -112,6 +113,7 @@ public class RigidController : NetworkBehaviour
         maxAmmoT.text = "" + maxAmmo;
         mainCam = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
         playerCam = GetComponentInChildren<Camera>();
+        miniCam = GameObject.Find("Minimap Camera").GetComponent<Camera>();
         body = GetComponentInChildren<Rigidbody>();
         if (isLocalPlayer)
         {
@@ -122,6 +124,7 @@ public class RigidController : NetworkBehaviour
                 r.enabled = true;
             mainCam.GetComponent<AudioListener>().enabled = false;
             mainCam.enabled = false;
+            miniCam.enabled = false;
         }
         else
         {
@@ -137,9 +140,11 @@ public class RigidController : NetworkBehaviour
     void OnDestroy()
     {
         GameObject.Find("Canvas").GetComponent<Canvas>().enabled = true;
-        Camera mc = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
-        mc.enabled = true;
-        mc.GetComponent<AudioListener>().enabled = true;
+        Camera mainC = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+        Camera miniC = GameObject.Find("Minimap Camera").GetComponent<Camera>();
+        mainC.enabled = true;
+        miniC.enabled = true;
+        mainC.GetComponent<AudioListener>().enabled = true;
     }
 
     // Update is called once per frame
@@ -243,6 +248,22 @@ public class RigidController : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    public void RpcApplyDamage(Vector4 dmg)
+    {
+        Debug.Log("YOINKS!");
+        if (hp <= 0)
+            return;
+        hp -= (int)dmg.w;
+        Debug.Log("current hp is " + hp);
+        Vector3 dir = new Vector3(-dmg.x, -dmg.y, -dmg.z);
+        if (hp < 0)
+        {
+            Debug.Log("Fuck im dead");
+            dead(dir);
+        }
+    }
+
     private void reload()
     {
         if (ammoCnt == maxAmmo)
@@ -274,5 +295,10 @@ public class RigidController : NetworkBehaviour
             foreach (Renderer r in fpsArm.GetComponentsInChildren<Renderer>())
                 r.enabled = true;
         }
+    }
+
+    void dead(Vector3 vec)
+    {
+
     }
 }

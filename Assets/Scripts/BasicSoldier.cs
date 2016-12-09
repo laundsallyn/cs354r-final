@@ -32,7 +32,7 @@ public class BasicSoldier : NetworkBehaviour {
 
     // Use this for initialization
     void Start () {
-        target = GameObject.Find("Cylinder (1)");
+        target = GameObject.FindGameObjectWithTag("Player");
         playerFound = false;
         state = AIStates.passive;
         changedState = false;
@@ -42,7 +42,10 @@ public class BasicSoldier : NetworkBehaviour {
         maxhp = hp = 300;
         maxammo = ammo = 30;
         damage = 17;
-        transform.Find("Quad").gameObject.SetActive(false);
+        GameObject quad = transform.Find("Quad").gameObject;
+        if (!isServer)
+            quad.GetComponent<Renderer>().enabled = false;
+        quad.SetActive(false);
         ani = GetComponent<Animation>();
         Debug.Log(ani.GetClipCount());
         agent = GetComponent<NavMeshAgent>();
@@ -51,11 +54,13 @@ public class BasicSoldier : NetworkBehaviour {
 
     void FixedUpdate()
     {
+        if (!isServer) return;
+
         if(death)
         {
             deathCounter += Time.fixedDeltaTime;
         }
-        if(death && deathCounter > 3.0f)
+        if(death && deathCounter > 1.5f)
         {
             Network.Destroy(GetComponent<NetworkView>().viewID);
         }
@@ -64,6 +69,12 @@ public class BasicSoldier : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (!isServer) return;
+
+        if(target == null)
+        {
+            target = GameObject.FindGameObjectWithTag("Player");
+        }
         //these first few if statements are important state checks dealing with health
         //and aspects of state that the player doesn't control
         if(hp <= 25 && hp > 0)
@@ -82,30 +93,59 @@ public class BasicSoldier : NetworkBehaviour {
             //basic raycast vision, will probably have to be made more realistic later
             Vector3 fwd = transform.TransformDirection(Vector3.forward);
             playerFound = false;
-            //determine if the player is within the immediate vicinity of the soldier
-            if (Vector3.Distance(transform.position, target.transform.position) < 5.0f)
+            if (target != null)
             {
-                playerFound = true;
-                transform.LookAt(target.transform);
-            }
-            else
-            {
-                //else, see if he is within the field of view.
-                if (Physics.Raycast(transform.position, fwd, 100))
+                ////determine if the player is within the immediate vicinity of the soldier
+                //if (Vector3.Distance(transform.position, target.transform.position) < 15.0f)
+                //{
+                //    playerFound = true;
+                //    transform.LookAt(target.transform);
+                //}
+                //else
+                //{
+                //    ////else, see if he is within the field of view.
+                //    //if (Physics.Raycast(transform.position, fwd, 100))
+                //    //{
+                //    //    Vector3 targetDir = target.transform.position - transform.position;
+                //    //    float angle = Vector3.Angle(targetDir, transform.forward);
+                //    //    if (angle < 90.0f)
+                //    //    {
+                //    //        //Debug.Log("enemy possibly within range");
+                //    //        transform.LookAt(target.transform);
+                //    //        RaycastHit hit;
+                //    //        Ray ray = new Ray(transform.position + transform.up, transform.forward);
+                //    //        if (Physics.Raycast(ray, out hit))
+                //    //        {
+                //    //            if (hit.collider != null && hit.collider.tag == "Player")
+                //    //            {
+                //    //                playerFound = true;
+                //    //            }
+                //    //        }
+                //    //    }
+                //    //}
+
+                //}
+                float targetDist = Vector3.Distance(transform.position, target.transform.position);
+                //Debug.Log(targetDist);
+                if(targetDist < 75.0f)
                 {
-                    Vector3 targetDir = target.transform.position - transform.position;
-                    float angle = Vector3.Angle(targetDir, transform.forward);
-                    if (angle < 90.0f)
+                    //Debug.Log("taret maybe?");
+                    if(targetDist < 5.0f)
                     {
-                        //Debug.Log("enemy possibly within range");
-                        transform.LookAt(target.transform);
-                        RaycastHit hit;
-                        Ray ray = new Ray(transform.position + transform.up, transform.forward);
-                        if (Physics.Raycast(ray, out hit))
+                        playerFound = true;
+                    }
+                    else
+                    {
+                        Vector3 targetDir = target.transform.position - transform.position;
+                        Debug.Log(Vector3.Angle(targetDir, transform.forward));
+                        if(Vector3.Angle(targetDir, transform.forward) < 55.0f)
                         {
-                            if (hit.collider != null && hit.collider.tag == "Player")
+                            RaycastHit hit;
+                            Ray ray = new Ray(transform.position + transform.up, targetDir);
+                            if(Physics.Raycast(ray, out hit))
                             {
-                                playerFound = true;
+                                if (hit.collider.gameObject.tag == "Player")
+                                    playerFound = true;
                             }
                         }
                     }
@@ -114,6 +154,7 @@ public class BasicSoldier : NetworkBehaviour {
 
             if (playerFound && state != AIStates.routing)
             {
+                transform.LookAt(target.transform);
                 Debug.Log("ENEMY FOUND!!!");
                 //The enemy will shoot at the player, and will be totally focused on killing them
                 fireWeapon();
@@ -236,16 +277,17 @@ public class BasicSoldier : NetworkBehaviour {
     // Use this for initialization
     public virtual void fireWeapon()
     {
-        /*if (ani.IsPlaying("firing"))
+        if (ani.IsPlaying("firing"))
             return;
-        ani.Play("firing");*/
+        ani.Play("firing");
         ammo -= 1;
         //flame.Emit(1);
         //Debug.Log(gunflame.name);
         //shotAudio.Play();
+        //Debug.Log("Let's get it poppin");
         Vector3 direction = transform.TransformDirection(Vector3.forward);
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, direction, out hit, 300))
+        if (Physics.Raycast(transform.position + transform.up, direction, out hit, 300))
         {
             Vector4 dmgInfo = new Vector4();
             dmgInfo.x = hit.normal.x;
@@ -253,7 +295,9 @@ public class BasicSoldier : NetworkBehaviour {
             dmgInfo.z = hit.normal.z;
             dmgInfo.w = damage;
             Debug.DrawLine(transform.position, hit.point, Color.cyan);
-            hit.collider.SendMessageUpwards("applyDamage", dmgInfo, SendMessageOptions.DontRequireReceiver);
+            //hit.collider.SendMessageUpwards("applyDamage", dmgInfo, SendMessageOptions.DontRequireReceiver);
+            //Debug.Log("preparing to send shot");
+            CmdSendShot(hit, dmgInfo);
 
         }
 
@@ -262,7 +306,13 @@ public class BasicSoldier : NetworkBehaviour {
     [Command]
     public void CmdSendShot(RaycastHit hit, Vector4 dmgInfo)
     {
-        //hit.collider.gameObject.GetComponent<BasicSoldier>().applyDamage(dmgInfo);
+        //Debug.Log(hit.collider.gameObject.name);
+        RigidController rc = hit.collider.gameObject.GetComponent<RigidController>();
+        if (rc)
+        {
+            //Debug.Log("Sending shot to player!");
+            rc.RpcApplyDamage(dmgInfo);
+        }
     }
 
     [ClientRpc]
