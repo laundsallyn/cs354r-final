@@ -34,18 +34,13 @@ public class RTSSelectionCam : MonoBehaviour {
             mousePosition1.y = Screen.height - mousePosition1.y;
             mousePositionT.y = Screen.height - mousePositionT.y;
             Rect rec = Utils.GetScreenRect(mousePosition1, mousePositionT);
-            Debug.Log("MP1 = " + mousePosition1 + " IMP = " + Input.mousePosition);
-            Debug.Log("REC = " + rec.xMin + " " + rec.yMin + " " + rec.xMax + " " + rec.yMax);
             foreach(GameObject go in allUnits)
             {
-                Debug.Log("Checking object");
                 Camera cam = GetComponent<Camera>();
                 Vector3 screenPos = cam.WorldToScreenPoint(go.transform.position);
                 screenPos.z = 0;
-                Debug.Log("POINT = " + screenPos);
                 if(rec.Contains(screenPos))
                 {
-                    Debug.Log("adding object");
                     selectedObjects.Add(go);
                 }
             }
@@ -99,10 +94,17 @@ public class RTSSelectionCam : MonoBehaviour {
             dest.transform.position = hit.point;
             foreach(GameObject go in selectedObjects)
             {
-                BasicSoldier bs = go.GetComponent<BasicSoldier>();
+                BasicSoldier bs = go.GetComponent<BasicSoldier>();                
+                if(bs.inCover)
+                {
+                    if (bs.state == BasicSoldier.AIStates.defensive)
+                        bs.goal.gameObject.tag = "CoverSpot";
+                    else
+                        bs.goal.gameObject.tag = "AmbushSpot";
+                    bs.inCover = false;
+                }
                 bs.goal = dest.transform;
                 bs.state = BasicSoldier.AIStates.passive;
-                bs.inCover = false;
             }
         }
     }

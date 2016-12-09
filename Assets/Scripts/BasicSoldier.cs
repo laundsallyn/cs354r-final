@@ -47,6 +47,13 @@ public class BasicSoldier : MonoBehaviour {
         {
             state = AIStates.routing;
         }
+        if(inCover && changedState)
+        {
+            if (goal.gameObject.tag == "OccupiedA")
+                goal.gameObject.tag = "AmbushSpot";
+            else
+                goal.gameObject.tag = "CoverSpot";
+        }
         if (state != AIStates.dead)
         {
             //basic raycast vision, will probably have to be made more realistic later
@@ -117,6 +124,7 @@ public class BasicSoldier : MonoBehaviour {
                         if(closest)
                         {
                             goal = closest.transform;
+                            closest.tag = "OccupiedA";
                             inCover = true;
                         }
                     }
@@ -144,6 +152,7 @@ public class BasicSoldier : MonoBehaviour {
                         if (closest)
                         {
                             goal = closest.transform;
+                            closest.tag = "OccupiedC";
                             inCover = true;
                         }
                     }
