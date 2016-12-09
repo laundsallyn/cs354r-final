@@ -8,10 +8,12 @@ public class RTSSelectionCam : MonoBehaviour {
     Vector3 mousePosition1;
     ArrayList selectedObjects = new ArrayList();
     GameObject[] allUnits;
+    GameObject dest;
 
     void Start()
     {
         allUnits = GameObject.FindGameObjectsWithTag("EnemyUnit");
+        //selectedObjects.Add(allUnits[0]);
     }
 
     void Update()
@@ -21,15 +23,6 @@ public class RTSSelectionCam : MonoBehaviour {
         {
             if (!isSelecting)
                 selectedObjects.Clear();
-            foreach (GameObject go in allUnits)
-            {
-                Debug.Log("checking this object");
-                if (IsWithinSelectionBounds(go))
-                {
-                    Debug.Log("adding this object");
-                    selectedObjects.Add(go);
-                }
-            }
             isSelecting = true;
             mousePosition1 = Input.mousePosition;
         }
@@ -37,27 +30,79 @@ public class RTSSelectionCam : MonoBehaviour {
         if (Input.GetMouseButtonUp(0))
         {
             isSelecting = false;
+            Vector3 mousePositionT = Input.mousePosition;
+            mousePosition1.y = Screen.height - mousePosition1.y;
+            mousePositionT.y = Screen.height - mousePositionT.y;
+            Rect rec = Utils.GetScreenRect(mousePosition1, mousePositionT);
+            Debug.Log("MP1 = " + mousePosition1 + " IMP = " + Input.mousePosition);
+            Debug.Log("REC = " + rec.xMin + " " + rec.yMin + " " + rec.xMax + " " + rec.yMax);
+            foreach(GameObject go in allUnits)
+            {
+                Debug.Log("Checking object");
+                Camera cam = GetComponent<Camera>();
+                Vector3 screenPos = cam.WorldToScreenPoint(go.transform.position);
+                screenPos.z = 0;
+                Debug.Log("POINT = " + screenPos);
+                if(rec.Contains(screenPos))
+                {
+                    Debug.Log("adding object");
+                    selectedObjects.Add(go);
+                }
+            }
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            Debug.Log("RMB");
+            mousePosition1 = Input.mousePosition;
             RTSClick();
+        }
+
+        if(Input.GetKey(KeyCode.Alpha1))
+        {
+            foreach(GameObject go in selectedObjects)
+            {
+                BasicSoldier bs = go.GetComponent<BasicSoldier>();
+                bs.state = BasicSoldier.AIStates.passive;
+                bs.changedState = true;
+            }
+        }
+
+        if (Input.GetKey(KeyCode.Alpha2))
+        {
+            foreach (GameObject go in selectedObjects)
+            {
+                BasicSoldier bs = go.GetComponent<BasicSoldier>();
+                bs.state = BasicSoldier.AIStates.aggressive;
+                bs.changedState = true;
+            }
+        }
+
+        if (Input.GetKey(KeyCode.Alpha3))
+        {
+            foreach (GameObject go in selectedObjects)
+            {
+                BasicSoldier bs = go.GetComponent<BasicSoldier>();
+                bs.state = BasicSoldier.AIStates.defensive;
+                bs.changedState = true;
+            }
         }
     }
 
     void RTSClick()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(mousePosition1);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            GameObject dest = new GameObject();
+            Object.Destroy(dest);
+            dest = new GameObject();
             dest.transform.position = hit.point;
             foreach(GameObject go in selectedObjects)
             {
-                MoveTo mt = go.GetComponent<MoveTo>();
-                mt.goal = dest.transform;
+                BasicSoldier bs = go.GetComponent<BasicSoldier>();
+                bs.goal = dest.transform;
+                bs.state = BasicSoldier.AIStates.passive;
+                bs.inCover = false;
             }
         }
     }
@@ -79,7 +124,7 @@ public class RTSSelectionCam : MonoBehaviour {
         if (isSelecting)
         {
             // Create a rect from both mouse positions
-            var rect = Utils.GetScreenRect(mousePosition1, Input.mousePosition);
+            Rect rect = Utils.GetScreenRect(mousePosition1, Input.mousePosition);
             Utils.DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
             Utils.DrawScreenRectBorder(rect, 2, new Color(0.8f, 0.8f, 0.95f));
         }

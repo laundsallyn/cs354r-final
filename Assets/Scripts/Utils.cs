@@ -61,7 +61,7 @@ public static class Utils {
         min.z = camera.nearClipPlane;
         max.z = camera.farClipPlane;
 
-        var bounds = new Bounds();
+        Bounds bounds = new Bounds();
         bounds.SetMinMax(min, max);
         return bounds;
     }   
