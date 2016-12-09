@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
 
-public class TrainingUnits : MonoBehaviour {
+public class TrainingUnits : NetworkBehaviour {
     //private Canvas can;
     private Camera cam;
     public Transform unitPrefab;
@@ -61,7 +62,8 @@ public class TrainingUnits : MonoBehaviour {
                 if (Physics.Raycast(ray, out hit))
                 {
                     Debug.Log(hit.point.x + " " + hit.point.y);
-                    Instantiate(unitPrefab, hit.point, Quaternion.identity);
+                    NetworkServer.Spawn(((Transform)Instantiate(unitPrefab, hit.point, Quaternion.identity)).gameObject);
+
                     reset();
                     Debug.Log("in Raycasting");
                     Cursor.SetCursor(null, Input.mousePosition, CursorMode.Auto);

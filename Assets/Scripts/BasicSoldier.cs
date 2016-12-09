@@ -10,7 +10,7 @@ public class BasicSoldier : NetworkBehaviour {
     public bool playerFound;
     public bool inCover;
     public bool changedState;
-
+    private ParticleSystem flame;
     protected int hp, maxhp, maxammo, ammo, damage;
     private Rigidbody body;
     private NavMeshAgent agent;
@@ -19,6 +19,7 @@ public class BasicSoldier : NetworkBehaviour {
 
     private float deathCounter;
     private bool death;
+    private float shootCounter;
 
     public enum AIStates
     {
@@ -43,13 +44,16 @@ public class BasicSoldier : NetworkBehaviour {
         maxammo = ammo = 30;
         damage = 17;
         GameObject quad = transform.Find("Quad").gameObject;
-        if (!isServer)
-            quad.GetComponent<Renderer>().enabled = false;
+        //if (!isServer)
+        //    quad.GetComponent<Renderer>().enabled = false;
         quad.SetActive(false);
         ani = GetComponent<Animation>();
         Debug.Log(ani.GetClipCount());
         agent = GetComponent<NavMeshAgent>();
         deathCounter = 0.0f;
+        shootCounter = 0.0f;
+        flame = GetComponentInChildren<ParticleSystem>();
+        flame.Stop();
     }
 
     void FixedUpdate()
@@ -137,7 +141,7 @@ public class BasicSoldier : NetworkBehaviour {
                     else
                     {
                         Vector3 targetDir = target.transform.position - transform.position;
-                        Debug.Log(Vector3.Angle(targetDir, transform.forward));
+                        //Debug.Log(Vector3.Angle(targetDir, transform.forward));
                         if(Vector3.Angle(targetDir, transform.forward) < 55.0f)
                         {
                             RaycastHit hit;
@@ -155,7 +159,7 @@ public class BasicSoldier : NetworkBehaviour {
             if (playerFound && state != AIStates.routing)
             {
                 transform.LookAt(target.transform);
-                Debug.Log("ENEMY FOUND!!!");
+                //Debug.Log("ENEMY FOUND!!!");
                 //The enemy will shoot at the player, and will be totally focused on killing them
                 fireWeapon();
                 //goal = null; //the soldier should stop and continue shooting until death for now
@@ -277,18 +281,22 @@ public class BasicSoldier : NetworkBehaviour {
     // Use this for initialization
     public virtual void fireWeapon()
     {
-        if (ani.IsPlaying("firing"))
+        if (shootCounter > 0.0f && shootCounter < 0.5f) {
+            shootCounter += Time.fixedDeltaTime;
             return;
-        ani.Play("firing");
+        }
+        //ani.Play("firing");
+        shootCounter = 0.0f;
         ammo -= 1;
-        //flame.Emit(1);
+        flame.Emit(1);
         //Debug.Log(gunflame.name);
         //shotAudio.Play();
-        //Debug.Log("Let's get it poppin");
+        Debug.Log("bang");
         Vector3 direction = transform.TransformDirection(Vector3.forward);
         RaycastHit hit;
         if (Physics.Raycast(transform.position + transform.up, direction, out hit, 300))
         {
+            Debug.Log("bang2");
             Vector4 dmgInfo = new Vector4();
             dmgInfo.x = hit.normal.x;
             dmgInfo.y = hit.normal.y;
@@ -297,26 +305,24 @@ public class BasicSoldier : NetworkBehaviour {
             Debug.DrawLine(transform.position, hit.point, Color.cyan);
             //hit.collider.SendMessageUpwards("applyDamage", dmgInfo, SendMessageOptions.DontRequireReceiver);
             //Debug.Log("preparing to send shot");
-            CmdSendShot(hit, dmgInfo);
-
+            SendShot(hit, dmgInfo);
         }
+        shootCounter += Time.fixedDeltaTime;
 
     }
 
-    [Command]
-    public void CmdSendShot(RaycastHit hit, Vector4 dmgInfo)
+    public void SendShot(RaycastHit hit, Vector4 dmgInfo)
     {
         //Debug.Log(hit.collider.gameObject.name);
-        RigidController rc = hit.collider.gameObject.GetComponent<RigidController>();
+        RigidController rc = hit.collider.gameObject.GetComponentInParent<RigidController>();
         if (rc)
         {
-            //Debug.Log("Sending shot to player!");
+            Debug.Log("Sending shot to player!");
             rc.RpcApplyDamage(dmgInfo);
         }
     }
-
-    [ClientRpc]
-    public void RpcApplyDamage(Vector4 dmg)
+    
+    public void ApplyDamage(Vector4 dmg)
     {
         Debug.Log("OH SHIT HIT");
         if (hp <= 0)
@@ -330,6 +336,11 @@ public class BasicSoldier : NetworkBehaviour {
             death = true;
             dead(dir);
         }
+    }
+
+    public void heal(int heal)
+    {
+        hp = hp + heal > maxhp ? maxhp : hp + heal;
     }
 
     public void dead(Vector3 direction)

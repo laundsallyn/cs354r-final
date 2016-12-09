@@ -19,7 +19,7 @@ public class RigidController : NetworkBehaviour
                                System.Convert.ToInt32(w) - System.Convert.ToInt32(s));
         }
     }
-    private WASD    wasd = new WASD();
+    private WASD wasd = new WASD();
     private float speed = 5;
     private float sensitivityX = 1F;
     private float sensitivityY = 1F;
@@ -63,12 +63,12 @@ public class RigidController : NetworkBehaviour
         List<Text> txts = new List<Text>();
         //pauseMenu = canvas.GetComponentInChildren<Image>();
         //pauseMenu.enabled = false;
-        transf    = transform.Find("MC");
+        transf = transform.Find("MC");
         animation = transf.gameObject.GetComponent<Animation>();
-        canvas    = transform.Find("HUD").gameObject.GetComponent<Canvas>();
-        gunflame  = transform.Find("MC/Camera/fire").gameObject;
-        fpsArm    = transform.Find("MC/Camera/Arm").gameObject;
-        flame     = gunflame.GetComponent<ParticleSystem>();
+        canvas = transform.Find("HUD").gameObject.GetComponent<Canvas>();
+        gunflame = transform.Find("MC/Camera/fire").gameObject;
+        fpsArm = transform.Find("MC/Camera/Arm").gameObject;
+        flame = gunflame.GetComponent<ParticleSystem>();
         canvas.GetComponentsInChildren(txts);
         Debug.Log("" + transform.rotation + transf.localRotation);
         transf.localRotation = transform.rotation;
@@ -112,8 +112,8 @@ public class RigidController : NetworkBehaviour
         maxHpT.text = "" + maxHealth;
         maxAmmoT.text = "" + maxAmmo;
         mainCam = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
-        playerCam = GetComponentInChildren<Camera>();
         miniCam = GameObject.Find("Minimap Camera").GetComponent<Camera>();
+        playerCam = GetComponentInChildren<Camera>();
         body = GetComponentInChildren<Rigidbody>();
         if (isLocalPlayer)
         {
@@ -133,6 +133,7 @@ public class RigidController : NetworkBehaviour
             foreach (Renderer r in fpsArm.GetComponentsInChildren<Renderer>())
                 r.enabled = false;
 
+            playerCam.GetComponent<AudioListener>().enabled = false;
             playerCam.enabled = false;
         }
     }
@@ -153,7 +154,7 @@ public class RigidController : NetworkBehaviour
         if (!isLocalPlayer) return;
 
         Vector3 move = body.rotation * wasd.GetV3().normalized * speed;
-        Vector3 v    = body.velocity; v.y = 0;
+        Vector3 v = body.velocity; v.y = 0;
         body.AddForce(move - v, ForceMode.VelocityChange);
     }
 
@@ -169,21 +170,12 @@ public class RigidController : NetworkBehaviour
 
         Vector3 mov = wasd.GetV3();
         if (mov.z != 0)
-        {
-            ani["walk"    ].speed = mov.z * 5;
-            ani.Play("walk");
-        }
+            Ani("walk", mov.z * 5);
         else
         if (mov.x != 0)
-        {
-            ani["Sidewalk"].speed = mov.x * 5;
-            ani.Play("Sidewalk");
-        }
+            Ani("Sidewalk", mov.x * 5);
         else
-        {
-            ani.Stop("walk");
-            ani.Stop("Sidewalk");
-        }
+            StopWalk();
 
         if (Input.GetKeyDown("r"))
         {
@@ -197,7 +189,7 @@ public class RigidController : NetworkBehaviour
 
         if (Input.GetKeyDown("space") && Physics.Raycast(transf.position, transf.up * -1, 1.1f, 1 << LayerMask.NameToLayer("Ground")))
         {
-            ani.Play("jump");
+            Ani("jump", ani["jump"].speed);
             body.AddForce(new Vector3(0, 300, 0));
         }
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -216,7 +208,7 @@ public class RigidController : NetworkBehaviour
     {
         if (fpsAni.isPlaying)
             return;
-        fpsAni.Play("fireWeapon");
+        FPSAni("fireWeapon");
         ammoCnt -= 1;
         flame.Emit(1);
         shotAudio.Play();
@@ -238,20 +230,20 @@ public class RigidController : NetworkBehaviour
     }
 
     [Command]
-    void CmdSendShot(RaycastHit hit, Vector4 dmgInfo)
+    public void CmdSendShot(RaycastHit hit, Vector4 dmgInfo)
     {
-        Debug.Log(hit.collider.gameObject.name);
+        //Debug.Log(hit.collider.gameObject.name);
         BasicSoldier bs = hit.collider.gameObject.GetComponent<BasicSoldier>();
-        if(bs)
+        if (bs)
         {
-            bs.RpcApplyDamage(dmgInfo);
+            bs.ApplyDamage(dmgInfo);
         }
     }
 
     [ClientRpc]
     public void RpcApplyDamage(Vector4 dmg)
     {
-        Debug.Log("YOINKS!");
+        Debug.Log("yoinks");
         if (hp <= 0)
             return;
         hp -= (int)dmg.w;
@@ -264,15 +256,85 @@ public class RigidController : NetworkBehaviour
         }
     }
 
+
     private void reload()
     {
         if (ammoCnt == maxAmmo)
             return;
         if (fpsAni.isPlaying)
             return;
-        fpsAni.Play("Reload");
+        FPSAni("Reload");
 
         ammoCnt = maxAmmo;
+    }
+
+    private void Ani(string s, float f)
+    {
+        ani[s].speed = f;
+        ani.Play(s);
+        if (isServer)
+            RpcAni(s, f);
+        else
+            CmdAni(s, f);
+    }
+
+    [ClientRpc]
+    private void RpcAni(string s, float f)
+    {
+        ani[s].speed = f;
+        ani.Play(s);
+    }
+
+    [Command]
+    private void CmdAni(string s, float f)
+    {
+        ani[s].speed = f;
+        ani.Play(s);
+    }
+
+    private void StopWalk()
+    {
+        ani.Stop("walk");
+        ani.Stop("Sidewalk");
+        if (isServer)
+            RpcStopWalk();
+        else
+            CmdStopWalk();
+    }
+
+    [ClientRpc]
+    private void RpcStopWalk()
+    {
+        ani.Stop("walk");
+        ani.Stop("Sidewalk");
+    }
+
+    [Command]
+    private void CmdStopWalk()
+    {
+        ani.Stop("walk");
+        ani.Stop("Sidewalk");
+    }
+
+    private void FPSAni(string s)
+    {
+        fpsAni.Play(s);
+        if (isServer)
+            RpcFPSAni(s);
+        else
+            CmdFPSAni(s);
+    }
+
+    [ClientRpc]
+    private void RpcFPSAni(string s)
+    {
+        fpsAni.Play(s);
+    }
+
+    [Command]
+    private void CmdFPSAni(string s)
+    {
+        fpsAni.Play(s);
     }
 
     private void thirdPersonView()
@@ -297,8 +359,13 @@ public class RigidController : NetworkBehaviour
         }
     }
 
-    void dead(Vector3 vec)
+    public void heal(int heal)
     {
+        hp = hp + heal > maxHealth ? maxHealth : hp + heal;
+    }
 
+    private void dead(Vector3 dir)
+    {
+        //just ded
     }
 }

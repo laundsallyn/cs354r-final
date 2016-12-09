@@ -52,6 +52,7 @@ public class RTSSelectionCam : NetworkBehaviour {
                     selectedObjects.Add(go);
                 }
             }
+            Debug.Log(selectedObjects.Count);
         }
 
         if (Input.GetMouseButtonDown(1))
