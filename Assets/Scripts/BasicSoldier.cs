@@ -5,13 +5,15 @@ public class BasicSoldier : MonoBehaviour {
 
     public Transform goal;
     public GameObject target;
-    public int health;
     public int speed;
     public bool playerFound;
     public bool inCover;
     public bool changedState;
     Quaternion startingAngle = Quaternion.AngleAxis(-60, Vector3.up);
     Quaternion stepAngle = Quaternion.AngleAxis(5, Vector3.up);
+
+    protected int hp, maxhp, maxammo, ammo, damage;
+    private Rigidbody body;
 
     public enum AIStates
     {
@@ -24,13 +26,41 @@ public class BasicSoldier : MonoBehaviour {
     public AIStates state;
 
     // Use this for initialization
+    public virtual void fireWeapon()
+    {
+
+    }
+
+    public virtual void applyDamage(Vector4 dmg)
+    {
+        if (hp <= 0)
+            return;
+        hp -= (int)dmg.w;
+        Debug.Log("current hp is " + hp);
+        Vector3 dir = new Vector3(-dmg.x, -dmg.y, -dmg.z);
+        if (hp < 0)
+            dead(dir);
+    }
+
+    public virtual void dead(Vector3 direction)
+    {
+        body.mass = 0.2f;
+        body.constraints = RigidbodyConstraints.None;
+        Destroy(this, 5);
+        body.AddRelativeForce(direction);
+    }
+
+    // Use this for initialization
     void Start () {
-        health = 200;
         playerFound = false;
         state = AIStates.passive;
         changedState = false;
         inCover = false;
         speed = 5;
+        body = GetComponent<Rigidbody>();
+        maxhp = hp = 300;
+        maxammo = ammo = 30;
+        damage = 17;
     }
 
 	
@@ -38,12 +68,7 @@ public class BasicSoldier : MonoBehaviour {
 	void Update () {
         //these first few if statements are important state checks dealing with health
         //and aspects of state that the player doesn't control
-        if (health <= 0 && state != AIStates.dead)
-        {
-            state = AIStates.dead;
-            Death();
-        }
-        else if(health <= 25)
+        if(hp <= 25)
         {
             state = AIStates.routing;
         }
@@ -161,7 +186,7 @@ public class BasicSoldier : MonoBehaviour {
                 if(state == AIStates.routing)
                 {
                     speed = 7;
-                    if(health > 25)
+                    if(hp > 25)
                     {
                         state = AIStates.passive;
                     }
