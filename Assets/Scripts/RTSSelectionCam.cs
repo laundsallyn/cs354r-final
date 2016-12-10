@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
-public class RTSSelectionCam : MonoBehaviour {
+public class RTSSelectionCam : NetworkBehaviour {
 
     bool isSelecting = false;
     bool firstSelect = true;
@@ -33,6 +34,7 @@ public class RTSSelectionCam : MonoBehaviour {
         // If we let go of the left mouse button, end selection
         if (Input.GetMouseButtonUp(0))
         {
+            allUnits = GameObject.FindGameObjectsWithTag("EnemyUnit");
             isSelecting = false;
             Vector3 mousePositionT = Input.mousePosition;
             mousePosition1.y = Screen.height - mousePosition1.y;

@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using System.Collections;
 
-public class BasicSoldier : MonoBehaviour {
+public class BasicSoldier : NetworkBehaviour {
 
     public Transform goal;
     public GameObject target;
@@ -16,6 +17,9 @@ public class BasicSoldier : MonoBehaviour {
     private Animation ani;
     AudioSource shotAudio;
 
+    private float deathCounter;
+    private bool death;
+
     public enum AIStates
     {
         dead = 0,
@@ -28,6 +32,7 @@ public class BasicSoldier : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        target = GameObject.Find("Cylinder (1)");
         playerFound = false;
         state = AIStates.passive;
         changedState = false;
@@ -41,6 +46,19 @@ public class BasicSoldier : MonoBehaviour {
         ani = GetComponent<Animation>();
         Debug.Log(ani.GetClipCount());
         agent = GetComponent<NavMeshAgent>();
+        deathCounter = 0.0f;
+    }
+
+    void FixedUpdate()
+    {
+        if(death)
+        {
+            deathCounter += Time.fixedDeltaTime;
+        }
+        if(death && deathCounter > 3.0f)
+        {
+            Network.Destroy(GetComponent<NetworkView>().viewID);
+        }
     }
 
 	
@@ -48,7 +66,7 @@ public class BasicSoldier : MonoBehaviour {
 	void Update () {
         //these first few if statements are important state checks dealing with health
         //and aspects of state that the player doesn't control
-        if(hp <= 25)
+        if(hp <= 25 && hp > 0)
         {
             state = AIStates.routing;
         }
@@ -241,29 +259,36 @@ public class BasicSoldier : MonoBehaviour {
 
     }
 
-    public virtual void applyDamage(Vector4 dmg)
+    [Command]
+    public void CmdSendShot(RaycastHit hit, Vector4 dmgInfo)
     {
+        //hit.collider.gameObject.GetComponent<BasicSoldier>().applyDamage(dmgInfo);
+    }
+
+    [ClientRpc]
+    public void RpcApplyDamage(Vector4 dmg)
+    {
+        Debug.Log("OH SHIT HIT");
         if (hp <= 0)
             return;
         hp -= (int)dmg.w;
         Debug.Log("current hp is " + hp);
         Vector3 dir = new Vector3(-dmg.x, -dmg.y, -dmg.z);
         if (hp < 0)
+        {
+            Debug.Log("Fuck im dead");
+            death = true;
             dead(dir);
+        }
     }
 
-    public virtual void dead(Vector3 direction)
+    public void dead(Vector3 direction)
     {
+        Debug.Log(direction);
+        state = AIStates.dead;
         body.mass = 0.2f;
         body.constraints = RigidbodyConstraints.None;
-        Destroy(this, 5);
-        body.AddRelativeForce(direction);
-    }
-
-
-    void Death()
-    {
-        //A void method to send this soldier to the void.
-        //fitting.
+        //Destroy(this, 5);
+        body.AddRelativeForce(direction * 100);
     }
 }

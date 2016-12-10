@@ -2,7 +2,8 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class CameraControl : MonoBehaviour {
+public class CameraControl : MonoBehaviour
+{
     private const int zoomSpeed = 40;
     private const int zoomMin = 0;
     private const int zoomMax = 1000;
@@ -10,16 +11,29 @@ public class CameraControl : MonoBehaviour {
     private int zoom = 400;
     private Vector3 scrollSpeed, zoomVector = Vector3.zero;
     private int width, height;
-
+    private GameObject cameraTarget;
+    private Camera RTSCam, minimapCam;
     void Start()
     {
+        cameraTarget = GameObject.Find("CameraTarget");
+        RTSCam = cameraTarget.GetComponentInChildren<Camera>();
+        minimapCam = GameObject.Find("Minimap Camera").GetComponent<Camera>();
         width = Screen.width;
-        height = Screen.height;
+        height = Screen.height; 
     }
 
     void Update()
     {
 
+        if (Input.GetMouseButtonDown(0) && minimapCam.pixelRect.Contains(Input.mousePosition))
+        {
+            //float xRatio = Input.mousePosition.x / minimapCam.pixelWidth;
+            //float zRatio = Input.mousePosition.z / minimapCam.pixelHeight;
+            Ray ray = minimapCam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+                cameraTarget.transform.position =new Vector3(hit.point.x, cameraTarget.transform.position.y, hit.point.z);
+        }
 
         if (Input.mousePosition.x > width - boundary)
             scrollSpeed = new Vector3(30, 0, 0);
@@ -49,27 +63,11 @@ public class CameraControl : MonoBehaviour {
         transform.Translate(zoomVector * Time.deltaTime);
         transform.Translate(scrollSpeed * Time.deltaTime);
     }
-    // Use this for initialization
-    //    void Update()
-    //    {
-    //        Debug.Log("In CameraControl");
-    //        if (Input.GetKeyDown("up"))
-    //            scrollSpeed = new Vector3(0,0,30);
-    //        if(Input.GetKeyUp("up"))
-    //            scrollSpeed = Vector3.zero;
-    //        if (Input.GetKeyDown("down"))
-    //            scrollSpeed = new Vector3(0, 0, -30);
-    //        if (Input.GetKeyUp("down"))
-    //            scrollSpeed = Vector3.zero;
-    //        if (Input.GetKeyDown("left"))
-    //            scrollSpeed = new Vector3(-30, 0, 0);
-    //        if (Input.GetKeyUp("left"))
-    //            scrollSpeed = Vector3.zero;
-    //        if (Input.GetKeyDown("right"))
-    //            scrollSpeed = new Vector3(30, 0, 0);
-    //        if (Input.GetKeyUp("right"))
-    //            scrollSpeed = Vector3.zero;
-    //        transform.Translate(scrollSpeed * Time.deltaTime);
-
-    //    }
+    void OnDrawGizmos()
+    {
+        float verticalHeightSeen = 50f ;
+        //Debug.Log("Viewport size is: " + verticalHeightSeen);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireCube(transform.position, new Vector3(verticalHeightSeen, 0, verticalHeightSeen));
+    }
 }

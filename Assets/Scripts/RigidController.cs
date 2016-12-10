@@ -31,6 +31,8 @@ public class RigidController : NetworkBehaviour
     private Camera playerCam;
     private Transform transf;
 
+    private int damage = 45;
+
     private Rigidbody body;
     private Animation ani, fpsAni;
     private GameObject fpsArm;
@@ -213,7 +215,34 @@ public class RigidController : NetworkBehaviour
         ammoCnt -= 1;
         flame.Emit(1);
         shotAudio.Play();
+        Vector3 direction = playerCam.transform.TransformDirection(Vector3.forward);
+        RaycastHit hit;
+        if (Physics.Raycast(playerCam.transform.position, direction, out hit, 300))
+        {
+            Vector4 dmgInfo = new Vector4();
+            dmgInfo.x = hit.normal.x;
+            dmgInfo.y = hit.normal.y;
+            dmgInfo.z = hit.normal.z;
+            dmgInfo.w = damage;
+            Debug.DrawLine(playerCam.transform.position, hit.point, Color.cyan);
+            Debug.Log("firing shot");
+            //hit.collider.SendMessageUpwards("applyDamage", dmgInfo, SendMessageOptions.DontRequireReceiver);
+            CmdSendShot(hit, dmgInfo);
+
+        }
     }
+
+    [Command]
+    void CmdSendShot(RaycastHit hit, Vector4 dmgInfo)
+    {
+        Debug.Log(hit.collider.gameObject.name);
+        BasicSoldier bs = hit.collider.gameObject.GetComponent<BasicSoldier>();
+        if(bs)
+        {
+            bs.RpcApplyDamage(dmgInfo);
+        }
+    }
+
     private void reload()
     {
         if (ammoCnt == maxAmmo)

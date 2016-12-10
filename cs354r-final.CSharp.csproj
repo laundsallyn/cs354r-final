@@ -78,6 +78,7 @@
     <Compile Include="Assets\Scripts\RTSSelectionCam.cs" />
     <Compile Include="Assets\Scripts\RigidController.cs" />
     <Compile Include="Assets\Scripts\Score.cs" />
+    <Compile Include="Assets\Scripts\TrainingUnits.cs" />
     <Compile Include="Assets\Scripts\Utils.cs" />
     <Compile Include="Assets\Scripts\raycastForward.cs" />
   </ItemGroup>
