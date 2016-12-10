@@ -9,11 +9,12 @@ public class BasicSoldier : MonoBehaviour {
     public bool playerFound;
     public bool inCover;
     public bool changedState;
-    Quaternion startingAngle = Quaternion.AngleAxis(-60, Vector3.up);
-    Quaternion stepAngle = Quaternion.AngleAxis(5, Vector3.up);
 
     protected int hp, maxhp, maxammo, ammo, damage;
     private Rigidbody body;
+    private NavMeshAgent agent;
+    private Animation ani;
+    AudioSource shotAudio;
 
     public enum AIStates
     {
@@ -26,31 +27,6 @@ public class BasicSoldier : MonoBehaviour {
     public AIStates state;
 
     // Use this for initialization
-    public virtual void fireWeapon()
-    {
-
-    }
-
-    public virtual void applyDamage(Vector4 dmg)
-    {
-        if (hp <= 0)
-            return;
-        hp -= (int)dmg.w;
-        Debug.Log("current hp is " + hp);
-        Vector3 dir = new Vector3(-dmg.x, -dmg.y, -dmg.z);
-        if (hp < 0)
-            dead(dir);
-    }
-
-    public virtual void dead(Vector3 direction)
-    {
-        body.mass = 0.2f;
-        body.constraints = RigidbodyConstraints.None;
-        Destroy(this, 5);
-        body.AddRelativeForce(direction);
-    }
-
-    // Use this for initialization
     void Start () {
         playerFound = false;
         state = AIStates.passive;
@@ -61,6 +37,10 @@ public class BasicSoldier : MonoBehaviour {
         maxhp = hp = 300;
         maxammo = ammo = 30;
         damage = 17;
+        transform.Find("Quad").gameObject.SetActive(false);
+        ani = GetComponent<Animation>();
+        Debug.Log(ani.GetClipCount());
+        agent = GetComponent<NavMeshAgent>();
     }
 
 	
@@ -118,7 +98,8 @@ public class BasicSoldier : MonoBehaviour {
             {
                 Debug.Log("ENEMY FOUND!!!");
                 //The enemy will shoot at the player, and will be totally focused on killing them
-                goal = null; //the soldier should stop and continue shooting until death for now
+                fireWeapon();
+                //goal = null; //the soldier should stop and continue shooting until death for now
             }
             else
             {
@@ -218,12 +199,67 @@ public class BasicSoldier : MonoBehaviour {
             if (goal)
             {
                 //transform.LookAt(goal);
-                NavMeshAgent agent = GetComponent<NavMeshAgent>();
+                if (Vector3.Distance(goal.position, transform.position) > 1.0f)
+                {
+                    transform.LookAt(goal);
+                    if (!ani.IsPlaying("walk"))
+                        ani.Play("walk");
+                }
+                else if (ani.IsPlaying("walk"))
+                {
+                    ani.Stop();
+                }
                 agent.destination = goal.position;
                 agent.speed = speed;
             }
         }
     }
+
+    // Use this for initialization
+    public virtual void fireWeapon()
+    {
+        /*if (ani.IsPlaying("firing"))
+            return;
+        ani.Play("firing");*/
+        ammo -= 1;
+        //flame.Emit(1);
+        //Debug.Log(gunflame.name);
+        //shotAudio.Play();
+        Vector3 direction = transform.TransformDirection(Vector3.forward);
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, direction, out hit, 300))
+        {
+            Vector4 dmgInfo = new Vector4();
+            dmgInfo.x = hit.normal.x;
+            dmgInfo.y = hit.normal.y;
+            dmgInfo.z = hit.normal.z;
+            dmgInfo.w = damage;
+            Debug.DrawLine(transform.position, hit.point, Color.cyan);
+            hit.collider.SendMessageUpwards("applyDamage", dmgInfo, SendMessageOptions.DontRequireReceiver);
+
+        }
+
+    }
+
+    public virtual void applyDamage(Vector4 dmg)
+    {
+        if (hp <= 0)
+            return;
+        hp -= (int)dmg.w;
+        Debug.Log("current hp is " + hp);
+        Vector3 dir = new Vector3(-dmg.x, -dmg.y, -dmg.z);
+        if (hp < 0)
+            dead(dir);
+    }
+
+    public virtual void dead(Vector3 direction)
+    {
+        body.mass = 0.2f;
+        body.constraints = RigidbodyConstraints.None;
+        Destroy(this, 5);
+        body.AddRelativeForce(direction);
+    }
+
 
     void Death()
     {

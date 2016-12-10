@@ -22,6 +22,10 @@ public class RTSSelectionCam : MonoBehaviour {
         if (Input.GetMouseButtonDown(0))
         {
             if (!isSelecting)
+                foreach(GameObject go in selectedObjects)
+                {
+                    go.transform.Find("Quad").gameObject.SetActive(false);
+                }
                 selectedObjects.Clear();
             isSelecting = true;
             mousePosition1 = Input.mousePosition;
@@ -41,6 +45,7 @@ public class RTSSelectionCam : MonoBehaviour {
                 screenPos.z = 0;
                 if(rec.Contains(screenPos))
                 {
+                    go.transform.Find("Quad").gameObject.SetActive(true);
                     selectedObjects.Add(go);
                 }
             }
