@@ -66,21 +66,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="cs354r-final.CSharp.Plugins.csproj">
-      <Project>{9D1290C5-E6DE-158E-3196-1C1017B20812}</Project>
-      <Name>cs354r-final.CSharp.Plugins</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="Assets\Scripts\BaseAI.cs" />
+    <Compile Include="Assets\Scripts\BasicSoldier.cs" />
     <Compile Include="Assets\Scripts\CameraControl.cs" />
     <Compile Include="Assets\Scripts\ChangeScene.cs" />
     <Compile Include="Assets\Scripts\CheckSetting.cs" />
     <Compile Include="Assets\Scripts\DisplayScore.cs" />
+    <Compile Include="Assets\Scripts\HealthPack.cs" />
+    <Compile Include="Assets\Scripts\MoveTo.cs" />
+    <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\Scripts\Quit.cs" />
+    <Compile Include="Assets\Scripts\RTSSelectionCam.cs" />
+    <Compile Include="Assets\Scripts\RigidController.cs" />
     <Compile Include="Assets\Scripts\Score.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Standard Assets\Characters\FirstPersonCharacter\FirstPersonCharacterGuidelines.txt" />
+    <Compile Include="Assets\Scripts\TrainingUnits.cs" />
+    <Compile Include="Assets\Scripts\Utils.cs" />
+    <Compile Include="Assets\Scripts\raycastForward.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
